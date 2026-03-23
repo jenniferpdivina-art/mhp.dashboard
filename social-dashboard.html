@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Social Media Dashboard — Middle Housing Partners</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Quicksand:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+--ivory:#FAF7EA;--ivory-dk:#F0EBD8;--blue:#C5D9E2;--blue-dk:#9BBFCE;
+--pink:#E1AEBC;--pink-dk:#D08A9E;--cherry:#852936;--cherry-lt:#A63D4D;
+--white:#FFFFFF;--td:#2C1E1E;--tm:#5A4444;--tl:#8A7070;
+--bdr:#E0D8CC;--bdr-lt:#EDE8DD;
+--s-draft:#4CAF50;--s-rev:#FF9800;--s-appr:#2196F3;--s-sched:#FFC107;--s-post:#C62828;
+--li:#0A66C2;--ig:#E1306C;--th:#000;--yt:#FF0000;
+}
+body{font-family:'Poppins',sans-serif;background:var(--ivory);color:var(--td);min-height:100vh;font-size:14px;}
+input,textarea,select,button{font-family:'Poppins',sans-serif;font-size:13px;}
+::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--ivory-dk);}::-webkit-scrollbar-thumb{background:var(--pink);border-radius:3px;}
+.f-title{font-family:'Playfair Display',serif;font-weight:700;letter-spacing:-2px;}
+.f-title em{font-style:italic;}
+.f-sub{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-weight:700;letter-spacing:-.5px;}
+.f-label{font-family:'Quicksand',sans-serif;font-weight:700;}
+.f-body{font-family:'Poppins',sans-serif;font-weight:400;}
+.app{max-width:1440px;margin:0 auto;padding:20px 28px;}
+
+.header{display:flex;align-items:flex-end;justify-content:space-between;padding:12px 0 20px;border-bottom:3px solid var(--cherry);margin-bottom:20px;}
+.header h1{font-size:48px;line-height:1.1;}
+.header-sub{font-size:22px;color:var(--cherry);margin-top:2px;}
+.month-nav{display:flex;align-items:center;gap:10px;}
+.month-nav button{background:var(--blue);border:none;border-radius:6px;padding:8px 16px;cursor:pointer;font-weight:600;font-size:13px;color:var(--td);transition:.15s;}
+.month-nav button:hover{background:var(--blue-dk);}
+.month-label{font-size:18px;min-width:170px;text-align:center;}
+
+.stats{display:flex;gap:14px;margin-bottom:18px;flex-wrap:wrap;}
+.stat{background:var(--white);border:1px solid var(--bdr);border-radius:10px;padding:12px 18px;min-width:130px;}
+.stat-val{font-size:28px;font-weight:700;color:var(--cherry);font-family:'Playfair Display',serif;}
+.stat-lbl{font-size:11px;color:var(--tl);text-transform:uppercase;letter-spacing:.5px;}
+
+.tabs{display:flex;gap:3px;margin-bottom:20px;background:var(--ivory-dk);padding:4px;border-radius:10px;}
+.tab{flex:1;padding:10px 14px;border:none;background:transparent;border-radius:8px;cursor:pointer;font-size:13px;color:var(--tm);transition:.15s;}
+.tab.active{background:var(--white);color:var(--cherry);box-shadow:0 1px 4px rgba(0,0,0,.06);}
+
+.btn{padding:8px 16px;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;}
+.btn-primary{background:var(--cherry);color:var(--white);}.btn-primary:hover{background:var(--cherry-lt);}
+.btn-secondary{background:var(--blue);color:var(--td);}.btn-secondary:hover{background:var(--blue-dk);}
+.btn-danger{background:#FEE2E2;color:#991B1B;}.btn-danger:hover{background:#FECACA;}
+.btn-sm{padding:5px 10px;font-size:11px;}
+.btn-ghost{background:transparent;color:var(--tm);border:1px solid var(--bdr);}.btn-ghost:hover{background:var(--ivory-dk);}
+
+.form-group{margin-bottom:14px;}
+.form-label{display:block;font-size:12px;margin-bottom:4px;text-transform:capitalize;}
+.form-input{width:100%;padding:9px 12px;border:1px solid var(--bdr);border-radius:8px;font-size:13px;background:var(--white);color:var(--td);transition:.15s;}
+.form-input:focus{outline:none;border-color:var(--cherry);}
+textarea.form-input{min-height:60px;resize:vertical;}
+
+/* Rich text toolbar */
+.rte-toolbar{display:flex;gap:2px;padding:4px;background:var(--ivory-dk);border:1px solid var(--bdr);border-bottom:none;border-radius:8px 8px 0 0;flex-wrap:wrap;}
+.rte-btn{padding:4px 8px;border:none;background:transparent;cursor:pointer;border-radius:4px;font-size:13px;font-weight:700;color:var(--tm);transition:.1s;min-width:28px;text-align:center;}
+.rte-btn:hover{background:var(--blue);}
+.rte-btn.active{background:var(--cherry);color:var(--white);}
+.rte-sep{width:1px;background:var(--bdr);margin:2px 4px;}
+.rte-area{border:1px solid var(--bdr);border-radius:0 0 8px 8px;padding:10px 12px;min-height:80px;background:var(--white);font-size:13px;line-height:1.6;outline:none;font-family:'Poppins',sans-serif;}
+.rte-area:focus{border-color:var(--cherry);}
+.rte-area ul,.rte-area ol{margin-left:20px;}
+
+.week-selector{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+.week-btn{padding:7px 16px;border:2px solid var(--bdr);border-radius:8px;background:var(--white);cursor:pointer;font-size:13px;font-weight:600;color:var(--tm);transition:.15s;}
+.week-btn.active{border-color:var(--cherry);color:var(--cherry);background:#FDF5F6;}
+
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
+@media(max-width:1200px){.week-grid{grid-template-columns:repeat(4,1fr);}}
+@media(max-width:700px){.week-grid{grid-template-columns:repeat(2,1fr);}}
+
+.content-card{background:var(--white);border:1px solid var(--bdr);border-radius:10px;overflow:hidden;cursor:pointer;transition:.15s;}
+.content-card:hover{box-shadow:0 4px 14px rgba(133,41,54,.1);transform:translateY(-1px);}
+.content-card-img{width:100%;height:110px;background:var(--ivory-dk);display:flex;align-items:center;justify-content:center;color:var(--tl);font-size:10px;overflow:hidden;}
+.content-card-img img,.content-card-img video{width:100%;height:110px;object-fit:cover;}
+.content-card-body{padding:8px 10px;}
+.day-tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:9px;text-transform:uppercase;letter-spacing:.4px;}
+.day-mon{background:#E8F0FE;color:#1A56DB;}.day-tue{background:#FEF3C7;color:#92400E;}.day-wed{background:#D1FAE5;color:#065F46;}
+.day-thu{background:#FCE7F3;color:#9D174D;}.day-fri{background:#EDE9FE;color:#5B21B6;}.day-sat{background:#FFF7ED;color:#9A3412;}.day-sun{background:#F1F5F9;color:#475569;}
+.content-card-title{font-size:11px;font-weight:600;color:var(--td);margin-top:5px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.status-pill{display:inline-block;padding:2px 7px;border-radius:10px;font-size:8px;font-weight:700;text-transform:uppercase;color:var(--white);}
+.status-draft{background:var(--s-draft);}.status-revision{background:var(--s-rev);}.status-approved{background:var(--s-appr);}
+.status-scheduled{background:var(--s-sched);color:var(--td);}.status-posted{background:var(--s-post);}
+.plat-badge{display:inline-flex;padding:1px 5px;border-radius:6px;font-size:9px;font-weight:600;}
+.plat-linkedin{background:#E8F0FE;color:var(--li);}.plat-instagram{background:#FCE7F3;color:var(--ig);}
+.plat-threads{background:#F3F4F6;color:var(--th);}.plat-youtube{background:#FEE2E2;color:var(--yt);}
+
+/* Gallery */
+.gallery-section{margin-top:20px;background:var(--white);border:1px solid var(--bdr);border-radius:10px;padding:16px;}
+.gallery-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.gallery-nav h3{font-size:15px;color:var(--cherry);}
+.gallery-arrows{display:flex;gap:6px;}
+.gallery-arrow{width:32px;height:32px;border:1px solid var(--bdr);border-radius:6px;background:var(--white);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:.15s;}
+.gallery-arrow:hover{background:var(--blue);}
+.gallery-scroll{display:flex;gap:8px;overflow-x:auto;padding:8px 0;}
+.gallery-thumb{min-width:110px;width:110px;height:110px;border-radius:8px;overflow:hidden;position:relative;border:1px solid var(--bdr);flex-shrink:0;}
+.gallery-thumb img,.gallery-thumb video{width:100%;height:100%;object-fit:cover;}
+.gallery-thumb .g-del{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.gallery-thumb .g-badge{position:absolute;bottom:3px;left:3px;background:rgba(0,0,0,.7);color:#fff;font-size:8px;padding:1px 5px;border-radius:3px;}
+.gallery-count{font-size:10px;color:var(--tl);margin-top:6px;}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(44,30,30,.5);display:flex;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(3px);}
+.modal{background:var(--white);border-radius:14px;width:92%;max-width:700px;max-height:90vh;overflow-y:auto;padding:24px;box-shadow:0 20px 60px rgba(133,41,54,.2);}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid var(--ivory-dk);}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--tl);padding:4px;line-height:1;}
+.modal-close:hover{color:var(--cherry);}
+
+/* Media upload area in form */
+.media-upload-area{border:2px dashed var(--bdr);border-radius:10px;padding:16px;background:var(--ivory);text-align:center;}
+.media-upload-area:hover{border-color:var(--pink);}
+.media-grid{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+.media-grid .gallery-thumb{min-width:80px;width:80px;height:80px;}
+
+.comment-row{display:flex;gap:8px;align-items:start;margin-bottom:6px;}
+.comment-num{min-width:22px;height:22px;background:var(--pink);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--white);margin-top:7px;}
+.comment-row textarea{flex:1;}
+.plat-checks{display:flex;gap:14px;margin-top:4px;flex-wrap:wrap;}
+.plat-check{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;cursor:pointer;}
+.plat-check input{cursor:pointer;accent-color:var(--cherry);}
+.status-options{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;}
+.status-opt{padding:5px 12px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;border:2px solid var(--bdr);transition:.15s;}
+.status-opt.selected{color:var(--white);}
+
+.view-field{margin-bottom:14px;}.view-label{font-size:10px;color:var(--tl);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+.view-value{font-size:14px;color:var(--td);line-height:1.5;white-space:pre-wrap;}
+
+/* Calendar */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--bdr);border:1px solid var(--bdr);border-radius:10px;overflow:hidden;}
+.cal-hdr{background:var(--blue);padding:10px;text-align:center;font-size:12px;color:var(--td);}
+.cal-cell{background:var(--white);min-height:100px;padding:7px;cursor:pointer;transition:.1s;}
+.cal-cell:hover{background:var(--ivory);}.cal-cell.empty{background:var(--ivory);cursor:default;}
+.cal-cell.today{background:#FFFDE7;}.cal-cell.posted{background:#F5F5F5;opacity:.55;}
+.cal-date{font-size:12px;font-weight:600;color:var(--tm);margin-bottom:3px;}
+.cal-title{font-size:9px;font-weight:600;color:var(--td);line-height:1.3;margin-bottom:2px;}
+.cal-theme{font-size:8px;color:var(--tl);text-transform:uppercase;}
+.cal-thumb{width:100%;height:32px;object-fit:cover;border-radius:3px;margin-bottom:2px;}
+.cal-platforms{display:flex;gap:2px;flex-wrap:wrap;margin-top:2px;align-items:center;}
+.cal-dot{width:6px;height:6px;border-radius:50%;}
+
+/* Engagement */
+.eng-col{background:var(--white);border:1px solid var(--bdr);border-radius:10px;padding:14px;}
+.eng-col-hdr{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.eng-dot{width:10px;height:10px;border-radius:50%;}
+.eng-col-title{font-size:14px;font-weight:700;}
+.eng-col-count{font-size:11px;color:var(--tl);margin-left:auto;}
+.eng-entry{background:var(--ivory);border-radius:8px;margin-bottom:5px;border:1px solid var(--bdr-lt);overflow:hidden;}
+.eng-entry-header{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;cursor:pointer;font-weight:600;font-size:13px;}
+.eng-entry-header:hover{background:var(--ivory-dk);}
+.eng-entry-arrow{font-size:10px;color:var(--tl);transition:.2s;}.eng-entry-arrow.open{transform:rotate(90deg);}
+.eng-entry-body{padding:0 10px 10px;}
+
+/* Brain Dump */
+.bd-layout-toggle{display:flex;gap:4px;margin-bottom:12px;}
+.bd-lt-btn{padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;cursor:pointer;font-size:12px;background:var(--white);}
+.bd-lt-btn.active{background:var(--cherry);color:var(--white);border-color:var(--cherry);}
+.bd-list .bd-card{margin-bottom:8px;}
+.bd-grid-view{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
+.bd-card{background:var(--white);border:1px solid var(--bdr);border-radius:10px;overflow:hidden;transition:.15s;}
+.bd-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.bd-card-header{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;cursor:pointer;}
+.bd-card-title{font-size:15px;font-weight:700;}
+.bd-card-date{font-size:11px;color:var(--tl);}
+.bd-card-body{padding:0 14px 14px;}
+.bd-card-text{font-size:13px;line-height:1.6;margin-bottom:10px;}
+.bd-card-text ul,.bd-card-text ol{margin-left:20px;}
+.bd-media-grid{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+.bd-media-thumb{width:70px;height:70px;border-radius:6px;overflow:hidden;border:1px solid var(--bdr);}
+.bd-media-thumb img,.bd-media-thumb video{width:100%;height:100%;object-fit:cover;}
+.bd-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;}
+.bd-tag{padding:2px 8px;border-radius:12px;font-size:10px;font-weight:600;background:var(--ivory-dk);color:var(--tm);}
+.bd-actions{display:flex;gap:6px;padding:0 14px 12px;}
+
+.flex{display:flex;}.gap-4{gap:4px;}.gap-6{gap:6px;}.gap-8{gap:8px;}.items-center{align-items:center;}.justify-between{justify-content:space-between;}
+.flex-wrap{flex-wrap:wrap;}.mt-6{margin-top:6px;}.mt-8{margin-top:8px;}.mt-12{margin-top:12px;}.mb-4{margin-bottom:4px;}.mb-8{margin-bottom:8px;}
+.scroll-y{max-height:600px;overflow-y:auto;}
+
+/* Multi-content per day */
+.day-posts{display:flex;flex-direction:column;gap:6px;}
+.day-post-mini{background:var(--ivory);border:1px solid var(--bdr-lt);border-radius:6px;padding:5px 7px;font-size:10px;cursor:pointer;transition:.1s;}
+.day-post-mini:hover{background:var(--ivory-dk);}
+.day-post-mini .mini-title{font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;}
+.add-post-btn{background:var(--ivory);border:1px dashed var(--bdr);border-radius:6px;padding:4px;text-align:center;cursor:pointer;font-size:10px;color:var(--pink);font-weight:700;transition:.15s;}
+.add-post-btn:hover{border-color:var(--cherry);color:var(--cherry);}
+
+/* Calendar note indicator */
+.cal-note{display:flex;align-items:center;gap:3px;margin-top:2px;}
+.cal-note-dot{width:6px;height:6px;border-radius:50%;background:var(--pink);flex-shrink:0;}
+.cal-note-text{font-size:8px;color:var(--pink-dk);font-weight:600;line-height:1.2;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;}
+
+/* Content card multi-post stack */
+.card-stack{position:relative;}
+.card-stack-count{position:absolute;top:6px;right:6px;background:var(--cherry);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;z-index:2;}
+
+/* Post list in view */
+.post-list-item{background:var(--ivory);border:1px solid var(--bdr-lt);border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:.15s;}
+.post-list-item:hover{border-color:var(--cherry);}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const{useState,useEffect,useRef,useCallback}=React;
+const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const TH={Monday:{label:'Underwriting Deals',tag:'UW Deal',cls:'day-mon'},Tuesday:{label:'TA Tuesday',tag:'TA Tue',cls:'day-tue'},Wednesday:{label:'Wednesday Article',tag:'Article',cls:'day-wed'},Thursday:{label:'Transformative Thursday',tag:'Transform',cls:'day-thu'},Friday:{label:'Friday Vibes',tag:'Friday',cls:'day-fri'},Saturday:{label:'Saturday',tag:'Saturday',cls:'day-sat'},Sunday:{label:'Sunday',tag:'Sunday',cls:'day-sun'}};
+const PL=['Instagram','LinkedIn','Threads','Youtube'];
+const STS=['Draft','Revision','Approved','Scheduled','Posted'];
+const SC={Draft:'status-draft',Revision:'status-revision',Approved:'status-approved',Scheduled:'status-scheduled',Posted:'status-posted'};
+const SB={Draft:'#4CAF50',Revision:'#FF9800',Approved:'#2196F3',Scheduled:'#FFC107',Posted:'#C62828'};
+const MO=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function dk(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function ld(k,fb){try{var d=localStorage.getItem(k);return d?JSON.parse(d):fb;}catch(e){return fb;}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function f2b(f){return new Promise(r=>{var fr=new FileReader();fr.onload=e=>r(e.target.result);fr.readAsDataURL(f);});}
+function gw(yr,mo){var f=new Date(yr,mo,1),l=new Date(yr,mo+1,0),w=[],ws=new Date(f);while(ws.getDay()!==1)ws.setDate(ws.getDate()-1);var n=1;while(ws<=l||n<=4){var ds=[];for(var i=0;i<7;i++){var d=new Date(ws);d.setDate(d.getDate()+i);ds.push(new Date(d));}w.push({num:n,days:ds});ws.setDate(ws.getDate()+7);n++;if(n>6)break;}return w;}
+function curW(weeks){var t=dk(new Date());for(var w of weeks)for(var d of w.days)if(dk(d)===t)return w.num;return 1;}
+
+// Multi-post data model: content = {date: [post1, post2, ...]}
+// Migration: if old format detected (object without array), convert
+function migrateContent(raw){
+  if(!raw||typeof raw!=='object')return{};
+  var out={};
+  Object.keys(raw).forEach(function(k){
+    var v=raw[k];
+    if(Array.isArray(v)){out[k]=v;}
+    else if(v&&typeof v==='object'&&(v.title!==undefined||v.caption!==undefined)){out[k]=[v];}
+    else{out[k]=v;}
+  });
+  return out;
+}
+function getPosts(content,date){return content[date]||[];}
+function addPost(content,date,post){return{...content,[date]:[...(content[date]||[]),post]};}
+function updatePost(content,date,idx,post){var arr=[...(content[date]||[])];arr[idx]=post;return{...content,[date]:arr};}
+function deletePost(content,date,idx){var arr=(content[date]||[]).filter(function(_,i){return i!==idx;});if(arr.length===0){var n={...content};delete n[date];return n;}return{...content,[date]:arr};}
+function platColor(p){return p==='LinkedIn'?'var(--li)':p==='Instagram'?'var(--ig)':p==='Youtube'?'var(--yt)':'var(--th)';}
+
+// ═══ Rich Text Editor Component ═══
+function RichTextEditor({value,onChange,placeholder,minHeight}){
+  var ref=useRef();
+  var initialized=useRef(false);
+  useEffect(function(){
+    if(ref.current&&!initialized.current){ref.current.innerHTML=value||'';initialized.current=true;}
+  },[]);
+  var exec=function(cmd,val){document.execCommand(cmd,false,val||null);ref.current.focus();};
+  var handleInput=function(){if(onChange)onChange(ref.current.innerHTML);};
+  var execColor=function(cmd){var c=prompt('Enter color (e.g. red, #FF0000):');if(c)exec(cmd,c);};
+  return (
+    <div>
+      <div className="rte-toolbar">
+        <button type="button" className="rte-btn" onClick={function(){exec('bold');}} title="Bold"><b>B</b></button>
+        <button type="button" className="rte-btn" onClick={function(){exec('italic');}} title="Italic"><i>I</i></button>
+        <button type="button" className="rte-btn" onClick={function(){exec('underline');}} title="Underline"><u>U</u></button>
+        <button type="button" className="rte-btn" onClick={function(){exec('strikeThrough');}} title="Strikethrough"><s>S</s></button>
+        <div className="rte-sep"/>
+        <button type="button" className="rte-btn" onClick={function(){exec('subscript');}} title="Subscript" style={{fontSize:11}}>x&#8322;</button>
+        <button type="button" className="rte-btn" onClick={function(){exec('superscript');}} title="Superscript" style={{fontSize:11}}>x&#178;</button>
+        <div className="rte-sep"/>
+        <button type="button" className="rte-btn" onClick={function(){execColor('foreColor');}} title="Text color" style={{borderBottom:'3px solid #C62828'}}>A</button>
+        <button type="button" className="rte-btn" onClick={function(){execColor('hiliteColor');}} title="Highlight" style={{background:'#FFFF00',borderRadius:4}}>A</button>
+        <div className="rte-sep"/>
+        <button type="button" className="rte-btn" onClick={function(){exec('justifyLeft');}} title="Align left">&#9776;</button>
+        <button type="button" className="rte-btn" onClick={function(){exec('justifyCenter');}} title="Align center" style={{letterSpacing:2}}>&#9776;</button>
+        <button type="button" className="rte-btn" onClick={function(){exec('justifyRight');}} title="Align right">&#8801;</button>
+        <div className="rte-sep"/>
+        <button type="button" className="rte-btn" onClick={function(){exec('insertUnorderedList');}} title="Bullets">&#8226;</button>
+        <button type="button" className="rte-btn" onClick={function(){exec('insertOrderedList');}} title="Numbering">1.</button>
+        <div className="rte-sep"/>
+        <button type="button" className="rte-btn" onClick={function(){exec('indent');}} title="Indent">&#8594;</button>
+        <button type="button" className="rte-btn" onClick={function(){exec('outdent');}} title="Outdent">&#8592;</button>
+      </div>
+      <div ref={ref} className="rte-area" contentEditable={true} onInput={handleInput}
+        style={{minHeight:minHeight||80}} data-placeholder={placeholder}
+        suppressContentEditableWarning={true}/>
+    </div>
+  );
+}
+
+// ═══ APP ═══
+function App(){
+  var now=new Date();
+  var[yr,setYr]=useState(now.getFullYear());
+  var[mo,setMo]=useState(now.getMonth());
+  var[tab,setTab]=useState('content');
+  var[content,setContent]=useState(function(){return migrateContent(ld('mhp4_content',{}));});
+  var[engagement,setEng]=useState(function(){return ld('mhp4_eng',{});});
+  var[dumps,setDumps]=useState(function(){return ld('mhp4_dumps',[]);});
+  var[todos,setTodos]=useState(function(){return ld('mhp4_todos',[]);});
+  var[notes,setNotes]=useState(function(){return ld('mhp4_notes',[]);});
+  var[editM,setEditM]=useState(null); // {date,dayName,postIndex} postIndex=-1 for new
+  var[viewM,setViewM]=useState(null); // {date,dayName,postIndex?}
+  var weeks=gw(yr,mo);
+  var[selW,setSelW]=useState(function(){return curW(weeks);});
+  var[engD,setEngD]=useState(dk(now));
+
+  useEffect(function(){sv('mhp4_content',content);},[content]);
+  useEffect(function(){sv('mhp4_eng',engagement);},[engagement]);
+  useEffect(function(){sv('mhp4_dumps',dumps);},[dumps]);
+  useEffect(function(){sv('mhp4_todos',todos);},[todos]);
+  useEffect(function(){sv('mhp4_notes',notes);},[notes]);
+  useEffect(function(){var w=gw(yr,mo);setSelW(curW(w));},[mo,yr]);
+
+  var pv=function(){if(mo===0){setMo(11);setYr(function(y){return y-1;});}else setMo(function(m){return m-1;});};
+  var nx=function(){if(mo===11){setMo(0);setYr(function(y){return y+1;});}else setMo(function(m){return m+1;});};
+  var mk=yr+'-'+String(mo+1).padStart(2,'0');
+  // Count total posts (sum of all arrays) for dates in this month
+  var pc=Object.keys(content).filter(function(k){return k.startsWith(mk);}).reduce(function(s,k){return s+(Array.isArray(content[k])?content[k].length:0);},0);
+  var ec=Object.keys(engagement).filter(function(k){return k.startsWith(mk);}).reduce(function(s,k){var d=engagement[k];return s+(d?.linkedin?.length||0)+(d?.instagram?.length||0)+(d?.threads?.length||0)+(d?.youtube?.length||0);},0);
+
+  // Handlers for multi-post save/delete
+  var handleSave=function(date,postIndex,postData){
+    setContent(function(prev){
+      if(postIndex===-1){return addPost(prev,date,postData);}
+      else{return updatePost(prev,date,postIndex,postData);}
+    });
+    setEditM(null);
+  };
+  var handleDelete=function(date,postIndex){
+    setContent(function(prev){return deletePost(prev,date,postIndex);});
+    setEditM(null);
+  };
+
+  return (
+    <div className="app">
+      <div className="header">
+        <div><h1 className="f-title">Social <em>Media</em> Dashboard</h1><div className="header-sub f-sub">Middle Housing Partners</div></div>
+        <div className="month-nav">
+          <button className="f-label" onClick={pv}>&#8249; Prev</button>
+          <span className="month-label f-label">{MO[mo]} {yr}</span>
+          <button className="f-label" onClick={nx}>Next &#8250;</button>
+        </div>
+      </div>
+      <div className="stats">
+        <div className="stat"><div className="stat-val">{pc}</div><div className="stat-lbl f-label">Posts this month</div></div>
+        <div className="stat"><div className="stat-val">{ec}</div><div className="stat-lbl f-label">Engagements logged</div></div>
+        <div className="stat"><div className="stat-val">{weeks.length}</div><div className="stat-lbl f-label">Weeks</div></div>
+      </div>
+      <div className="tabs">
+        {['content','calendar','engagement','braindump'].map(function(t){return(
+          <button key={t} className={'tab f-label'+(tab===t?' active':'')} onClick={function(){setTab(t);}}>
+            {t==='content'?'Content manager':t==='calendar'?'Calendar':t==='engagement'?'Engagement tracker':'Brain dump'}
+          </button>
+        );})}
+      </div>
+
+      {tab==='content'&&<ContentTab weeks={weeks} mo={mo} content={content} selW={selW} setSelW={setSelW} setEditM={setEditM} setViewM={setViewM} todos={todos} setTodos={setTodos} notes={notes} setNotes={setNotes}/>}
+      {tab==='calendar'&&<CalendarTab yr={yr} mo={mo} content={content} notes={notes} setViewM={setViewM}/>}
+      {tab==='engagement'&&<EngagementTab eng={engagement} setEng={setEng} engD={engD} setEngD={setEngD}/>}
+      {tab==='braindump'&&<BrainDumpTab dumps={dumps} setDumps={setDumps}/>}
+
+      {editM&&<EditModal data={editM} content={content}
+        onSave={handleSave}
+        onClose={function(){setEditM(null);}}
+        onDelete={handleDelete}/>}
+      {viewM&&<ViewModal data={viewM} content={content} onClose={function(){setViewM(null);}} setEditM={setEditM}/>}
+    </div>
+  );
+}
+
+// ═══ CONTENT TAB ═══
+function ContentTab({weeks,mo,content,selW,setSelW,setEditM,setViewM,todos,setTodos,notes,setNotes}){
+  var week=weeks.find(function(w){return w.num===selW;})||weeks[0];
+
+  // Gallery: collect media from ALL posts for this week
+  var weekMedia=[];
+  week.days.forEach(function(date,i){
+    var d=dk(date);
+    var posts=getPosts(content,d);
+    posts.forEach(function(post,pi){
+      if(post.mediaFiles&&post.mediaFiles.length){
+        post.mediaFiles.forEach(function(m){weekMedia.push({...m,date:d,dayName:DAYS[i],dayNum:date.getDate(),postTitle:post.title});});
+      }
+      if(post.image){weekMedia.push({data:post.image,type:'image',date:d,dayName:DAYS[i],dayNum:date.getDate(),postTitle:post.title});}
+    });
+  });
+
+  var prevW=function(){setSelW(function(w){return Math.max(1,w-1);});};
+  var nextW=function(){setSelW(function(w){return Math.min(weeks.length,w+1);});};
+
+  return (
+    <div>
+      <div className="week-selector">
+        {weeks.map(function(w){return <button key={w.num} className={'week-btn f-label'+(selW===w.num?' active':'')} onClick={function(){setSelW(w.num);}}>Week {w.num}</button>;})}
+      </div>
+      <div className="week-grid">
+        {week.days.map(function(date,i){
+          var d=dk(date),day=DAYS[i],theme=TH[day],posts=getPosts(content,d),inMo=date.getMonth()===mo;
+          var firstPost=posts[0]||null;
+          var firstMedia=firstPost?.mediaFiles?.[0]||null;
+          var thumb=firstPost?.image||firstMedia?.data||null;
+          var isVid=firstMedia?.type==='video'&&!firstPost?.image;
+          return (
+            <div key={d} className={'content-card'+(posts.length>1?' card-stack':'')} style={{opacity:inMo?1:.4}}>
+              {posts.length>1&&<div className="card-stack-count">{posts.length} posts</div>}
+              <div className="content-card-img" onClick={function(){if(posts.length===0)setEditM({date:d,dayName:day,postIndex:-1});else if(posts.length===1)setViewM({date:d,dayName:day,postIndex:0});else setViewM({date:d,dayName:day});}}>
+                {thumb?(isVid?<video src={thumb} muted/>:<img src={thumb} alt=""/>):<span className="f-label">No image</span>}
+              </div>
+              <div className="content-card-body">
+                <div className="flex items-center justify-between mb-4">
+                  <span className={'day-tag f-label '+theme.cls}>{theme.tag}</span>
+                  {firstPost?.status&&<span className={'status-pill '+SC[firstPost.status]}>{firstPost.status}</span>}
+                </div>
+                {posts.length===0&&<div className="content-card-title" style={{color:'var(--tl)',cursor:'pointer'}} onClick={function(){setEditM({date:d,dayName:day,postIndex:-1});}}>Click to add content</div>}
+                {posts.length===1&&<div>
+                  <div className="content-card-title">{firstPost.title||'Untitled'}</div>
+                  <div className="flex gap-4 mt-6 flex-wrap">{firstPost.platforms?.map(function(p){return <span key={p} className={'plat-badge plat-'+p.toLowerCase()}>{p}</span>;})}</div>
+                  <button className="btn btn-ghost btn-sm mt-8 f-label" style={{width:'100%'}} onClick={function(e){e.stopPropagation();setEditM({date:d,dayName:day,postIndex:0});}}>Edit</button>
+                </div>}
+                {posts.length>1&&<div className="day-posts">
+                  {posts.map(function(post,pi){return(
+                    <div key={pi} className="day-post-mini" onClick={function(e){e.stopPropagation();setViewM({date:d,dayName:day,postIndex:pi});}}>
+                      <div className="flex items-center justify-between">
+                        <span className="mini-title">{post.title||'Untitled'}</span>
+                        {post.status&&<span className={'status-pill '+SC[post.status]} style={{fontSize:7}}>{post.status}</span>}
+                      </div>
+                    </div>
+                  );})}
+                </div>}
+                <div className="add-post-btn mt-6" onClick={function(e){e.stopPropagation();setEditM({date:d,dayName:day,postIndex:-1});}}>+ Add post</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Gallery from form attachments */}
+      <div className="gallery-section">
+        <div className="gallery-nav">
+          <h3 className="f-label">Week {selW} media gallery</h3>
+          <div className="gallery-arrows">
+            <button className="gallery-arrow" onClick={prevW} title="Previous week">&#8249;</button>
+            <button className="gallery-arrow" onClick={nextW} title="Next week">&#8250;</button>
+          </div>
+        </div>
+        {weekMedia.length>0?(
+          <div>
+            <div className="gallery-scroll">
+              {weekMedia.map(function(m,i){return(
+                <div key={i} className="gallery-thumb">
+                  {m.type==='video'?<video src={m.data} muted/>:<img src={m.data} alt=""/>}
+                  {m.type==='video'&&<div className="g-badge">VID</div>}
+                  <div className="g-badge" style={{left:'auto',right:3,bottom:3,background:'rgba(133,41,54,.8)'}}>{m.dayName.substring(0,3)} {m.dayNum}</div>
+                </div>
+              );})}
+            </div>
+            <div className="gallery-count f-label">{weekMedia.length} media items this week</div>
+          </div>
+        ):(
+          <div style={{textAlign:'center',padding:30,color:'var(--tl)'}} className="f-body">No media uploaded for this week yet. Add content to see images and videos here.</div>
+        )}
+      </div>
+
+      {/* Notes & Tasks */}
+      <div style={{marginTop:24,paddingTop:20,borderTop:'3px solid var(--cherry)'}}>
+        <h2 className="f-title" style={{fontSize:20,marginBottom:14}}>Notes & Tasks</h2>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+          <NotesBox notes={notes} setNotes={setNotes}/>
+          <TodoBox todos={todos} setTodos={setTodos}/>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══ NOTES BOX (with date field) ═══
+function NotesBox({notes,setNotes}){
+  var[text,setText]=useState('');
+  var[noteDate,setNoteDate]=useState('');
+  var add=function(){
+    if(!text.trim())return;
+    setNotes(function(p){return[...p,{id:Date.now(),text:text.trim(),date:noteDate||''}];});
+    setText('');setNoteDate('');
+  };
+  var markDone=function(id){setNotes(function(p){return p.filter(function(n){return n.id!==id;});});};
+  return (
+    <div style={{background:'var(--white)',border:'1px solid var(--bdr)',borderRadius:10,padding:16}}>
+      <h3 className="f-label" style={{fontSize:14,marginBottom:10,color:'var(--cherry)'}}>Notes</h3>
+      <div style={{display:'flex',gap:6,marginBottom:10,flexWrap:'wrap'}}>
+        <textarea className="form-input f-body" placeholder="Add a note..." value={text} onChange={function(e){setText(e.target.value);}} rows={2} style={{flex:'1 1 100%'}}/>
+        <div style={{display:'flex',gap:6,width:'100%',alignItems:'center'}}>
+          <input type="date" className="form-input f-body" value={noteDate} onChange={function(e){setNoteDate(e.target.value);}} style={{flex:1}} placeholder="Date (optional)"/>
+          <button className="btn btn-primary btn-sm f-label" onClick={add}>Add</button>
+        </div>
+      </div>
+      <div style={{maxHeight:300,overflowY:'auto'}}>
+        {notes.map(function(n){return(
+          <div key={n.id} style={{display:'flex',alignItems:'flex-start',gap:8,padding:'8px 10px',background:'var(--ivory)',borderRadius:8,marginBottom:5,border:'1px solid var(--bdr-lt)'}}>
+            <div style={{flex:1}}>
+              <div className="f-body" style={{fontSize:13,lineHeight:1.5,whiteSpace:'pre-wrap'}}>{n.text}</div>
+              {n.date&&<div className="f-label" style={{fontSize:10,color:'var(--pink-dk)',marginTop:2}}>{n.date}</div>}
+            </div>
+            <button className="btn btn-sm f-label" style={{background:'var(--s-draft)',color:'#fff',whiteSpace:'nowrap'}} onClick={function(){markDone(n.id);}}>Done</button>
+          </div>
+        );})}
+        {notes.length===0&&<div style={{textAlign:'center',padding:20,color:'var(--tl)',fontSize:13}} className="f-body">No notes yet</div>}
+      </div>
+    </div>
+  );
+}
+
+// ═══ TODO BOX ═══
+function TodoBox({todos,setTodos}){
+  var[text,setText]=useState('');
+  var[due,setDue]=useState('');
+  var add=function(){if(!text.trim())return;setTodos(function(p){return[...p,{id:Date.now(),text:text.trim(),due:due,done:false}];});setText('');setDue('');};
+  var tog=function(id){setTodos(function(p){return p.map(function(t){return t.id===id?{...t,done:!t.done}:t;});});};
+  var rm=function(id){setTodos(function(p){return p.filter(function(t){return t.id!==id;});});};
+  var isOD=function(s){if(!s)return false;var t=new Date();t.setHours(0,0,0,0);return new Date(s+'T00:00:00')<t;};
+  return (
+    <div style={{background:'var(--white)',border:'1px solid var(--bdr)',borderRadius:10,padding:16}}>
+      <h3 className="f-label" style={{fontSize:14,marginBottom:10,color:'var(--cherry)'}}>To-do list</h3>
+      <div style={{display:'flex',gap:6,marginBottom:10}}>
+        <input className="form-input f-body" placeholder="New task..." value={text} onChange={function(e){setText(e.target.value);}} onKeyDown={function(e){if(e.key==='Enter')add();}} style={{flex:1}}/>
+        <input type="date" className="form-input f-body" value={due} onChange={function(e){setDue(e.target.value);}} style={{width:130}}/>
+        <button className="btn btn-primary btn-sm f-label" onClick={add}>Add</button>
+      </div>
+      <div style={{maxHeight:300,overflowY:'auto'}}>
+        {todos.map(function(t){
+          var od=!t.done&&isOD(t.due);
+          return <div key={t.id} style={{display:'flex',alignItems:'center',gap:8,padding:'8px 10px',background:od?'#FEF2F2':'var(--ivory)',borderRadius:8,marginBottom:5,border:'1px solid '+(od?'#EF4444':'var(--bdr-lt)'),opacity:t.done?.5:1}}>
+            <input type="checkbox" checked={t.done} onChange={function(){tog(t.id);}} style={{accentColor:'var(--cherry)',cursor:'pointer',width:16,height:16}}/>
+            <span className="f-body" style={{flex:1,fontSize:13,fontWeight:500,textDecoration:t.done?'line-through':'none'}}>{t.text}</span>
+            {t.due&&<span className="f-label" style={{fontSize:10,color:od?'#EF4444':'var(--tl)',whiteSpace:'nowrap'}}>{t.due}</span>}
+            {od&&<span style={{background:'#EF4444',color:'#fff',fontSize:8,fontWeight:700,padding:'1px 5px',borderRadius:4}}>OVERDUE</span>}
+            <button style={{background:'none',border:'none',cursor:'pointer',color:'var(--tl)',fontSize:14,padding:2}} onClick={function(){rm(t.id);}}>&#10005;</button>
+          </div>;
+        })}
+        {todos.length===0&&<div style={{textAlign:'center',padding:20,color:'var(--tl)',fontSize:13}} className="f-body">No tasks yet</div>}
+      </div>
+    </div>
+  );
+}
+
+// ═══ EDIT MODAL (multi-post aware) ═══
+function EditModal({data,content,onSave,onClose,onDelete}){
+  var posts=getPosts(content,data.date);
+  var isNew=data.postIndex===-1;
+  var ex=isNew?{}:(posts[data.postIndex]||{});
+  var theme=TH[data.dayName];
+  var[title,setTitle]=useState(ex.title||'');
+  var[caption,setCaption]=useState(ex.caption||'');
+  var[hashtags,setHash]=useState(ex.hashtags||'');
+  var[image,setImage]=useState(ex.image||'');
+  var[imageUrl,setImageUrl]=useState('');
+  var[platforms,setPlat]=useState(ex.platforms||['Instagram','LinkedIn']);
+  var[comments,setCom]=useState(ex.comments||['','','','','']);
+  var[status,setStatus]=useState(ex.status||'Draft');
+  var[remarks,setRemarks]=useState(ex.remarks||'');
+  var[postLink,setPostLink]=useState(ex.postLink||'');
+  var[mediaFiles,setMediaFiles]=useState(ex.mediaFiles||[]);
+  var coverRef=useRef();
+  var mediaRef=useRef();
+
+  var handleCover=function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(ev){setImage(ev.target.result);};r.readAsDataURL(f);};
+
+  var addMediaFiles=async function(e){
+    var files=Array.from(e.target.files);
+    var newItems=[];
+    for(var f of files){
+      var b64=await f2b(f);
+      var type=f.type.startsWith('video')?'video':'image';
+      var imgs=mediaFiles.filter(function(m){return m.type==='image';}).length+newItems.filter(function(m){return m.type==='image';}).length;
+      var vids=mediaFiles.filter(function(m){return m.type==='video';}).length+newItems.filter(function(m){return m.type==='video';}).length;
+      if(type==='image'&&imgs<20)newItems.push({data:b64,type:'image',name:f.name});
+      if(type==='video'&&vids<2)newItems.push({data:b64,type:'video',name:f.name});
+    }
+    setMediaFiles(function(p){return[...p,...newItems];});
+  };
+
+  var removeMedia=function(idx){setMediaFiles(function(p){return p.filter(function(_,i){return i!==idx;});});};
+  var imgCount=mediaFiles.filter(function(m){return m.type==='image';}).length;
+  var vidCount=mediaFiles.filter(function(m){return m.type==='video';}).length;
+
+  var doSave=function(){
+    var postData={title:title,caption:caption,hashtags:hashtags,image:image,platforms:platforms,comments:comments,status:status,remarks:remarks,postLink:postLink,mediaFiles:mediaFiles,dayName:data.dayName};
+    onSave(data.date,data.postIndex,postData);
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={function(e){e.stopPropagation();}}>
+        <div className="modal-header">
+          <div>
+            <span className={'day-tag f-label '+theme.cls} style={{marginRight:8,fontSize:12}}>{theme.label}</span>
+            <span className="f-body" style={{fontSize:13,color:'var(--tl)'}}>{data.date}</span>
+            <span className="f-label" style={{fontSize:11,color:'var(--cherry)',marginLeft:8}}>{isNew?'(new post)':'(post #'+(data.postIndex+1)+')'}</span>
+          </div>
+          <button className="modal-close" onClick={onClose}>&#10005;</button>
+        </div>
+
+        <div className="form-group"><label className="form-label f-label">Title</label><input className="form-input f-body" value={title} onChange={function(e){setTitle(e.target.value);}} placeholder="Content title (shows in calendar)..."/></div>
+
+        <div className="form-group"><label className="form-label f-label">Cover image</label>
+          {image?<div style={{position:'relative',borderRadius:10,overflow:'hidden',marginBottom:8}}>
+            <img src={image} alt="" style={{width:'100%',maxHeight:180,objectFit:'cover'}}/>
+            <button className="btn btn-danger btn-sm" style={{position:'absolute',top:8,right:8}} onClick={function(){setImage('');}}>Remove</button>
+          </div>:null}
+          <div className="flex gap-8">
+            <button className="btn btn-secondary f-label btn-sm" onClick={function(){coverRef.current.click();}}>Upload cover</button>
+            <input className="form-input f-body" placeholder="Or paste image URL..." value={imageUrl} onChange={function(e){setImageUrl(e.target.value);}} style={{flex:1}}/>
+            <button className="btn btn-ghost btn-sm f-label" onClick={function(){if(imageUrl.trim())setImage(imageUrl.trim());}}>Set</button>
+          </div>
+          <input type="file" ref={coverRef} accept="image/*" style={{display:'none'}} onChange={handleCover}/>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label f-label">Media files (carousel slides, images & videos)</label>
+          <div className="media-upload-area" onClick={function(){mediaRef.current.click();}}>
+            <div style={{fontSize:22,color:'var(--pink)'}}>+</div>
+            <div className="f-body" style={{fontSize:11,color:'var(--tl)'}}>Click to upload images (max 20) and videos (max 2)</div>
+          </div>
+          <input type="file" ref={mediaRef} accept="image/*,video/*" multiple style={{display:'none'}} onChange={addMediaFiles}/>
+          {mediaFiles.length>0&&<div className="media-grid">
+            {mediaFiles.map(function(m,i){return(
+              <div key={i} className="gallery-thumb">
+                {m.type==='video'?<video src={m.data} muted/>:<img src={m.data} alt=""/>}
+                {m.type==='video'&&<div className="g-badge">VID</div>}
+                <button className="g-del" onClick={function(){removeMedia(i);}}>&#10005;</button>
+              </div>
+            );})}
+          </div>}
+          <div className="gallery-count f-label mt-6">{imgCount}/20 images &bull; {vidCount}/2 videos</div>
+        </div>
+
+        <div className="form-group"><label className="form-label f-label">Caption</label>
+          <RichTextEditor value={caption} onChange={setCaption} placeholder="Write your post caption here..." minHeight={100}/>
+        </div>
+
+        <div className="form-group"><label className="form-label f-label">Hashtags</label><input className="form-input f-body" value={hashtags} onChange={function(e){setHash(e.target.value);}} placeholder="#middlehousing #adu #realestate..."/></div>
+
+        <div className="form-group"><label className="form-label f-label">Platforms</label>
+          <div className="plat-checks">{PL.map(function(p){return <label key={p} className="plat-check f-body"><input type="checkbox" checked={platforms.includes(p)} onChange={function(){setPlat(function(prev){return prev.includes(p)?prev.filter(function(x){return x!==p;}):[...prev,p];});}}/>{p}</label>;})}</div>
+        </div>
+
+        <div className="form-group"><label className="form-label f-label">Post link</label><input className="form-input f-body" value={postLink} onChange={function(e){setPostLink(e.target.value);}} placeholder="https://..."/></div>
+
+        <div className="form-group"><label className="form-label f-label">Progress status</label>
+          <div className="status-options">{STS.map(function(s){return <div key={s} className={'status-opt f-label'+(status===s?' selected':'')} style={{borderColor:SB[s],background:status===s?SB[s]:'transparent',color:status===s?(s==='Scheduled'?'#333':'#fff'):'#555'}} onClick={function(){setStatus(s);}}>{s}</div>;})}</div>
+        </div>
+
+        <div className="form-group"><label className="form-label f-label">5 Follow-up engagement comments</label>
+          {comments.map(function(c,i){return <div key={i} className="comment-row"><span className="comment-num">{i+1}</span><textarea className="form-input f-body" value={c} onChange={function(e){var a=[...comments];a[i]=e.target.value;setCom(a);}} placeholder={'Comment #'+(i+1)+'...'} rows={2}/></div>;})}
+        </div>
+
+        <div className="form-group"><label className="form-label f-label">Remarks / notes</label><textarea className="form-input f-body" value={remarks} onChange={function(e){setRemarks(e.target.value);}} placeholder="Internal notes or remarks..." rows={3}/></div>
+
+        <div className="flex justify-between mt-12">
+          <div>{!isNew&&<button className="btn btn-danger f-label" onClick={function(){onDelete(data.date,data.postIndex);}}>Delete</button>}</div>
+          <div className="flex gap-8">
+            <button className="btn btn-ghost f-label" onClick={onClose}>Cancel</button>
+            <button className="btn btn-primary f-label" onClick={doSave}>{isNew?'Add post':'Save changes'}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══ VIEW MODAL (multi-post: list or single detail) ═══
+function ViewModal({data,content,onClose,setEditM}){
+  var posts=getPosts(content,data.date);
+  var[viewIdx,setViewIdx]=useState(data.postIndex!==undefined?data.postIndex:null);
+  var theme=TH[data.dayName];
+
+  // If specific post index given or only one post, show detail directly
+  var showDetail=viewIdx!==null&&viewIdx!==undefined;
+  var entry=showDetail?posts[viewIdx]:null;
+
+  if(posts.length===0)return null;
+
+  // If multiple posts and no specific one selected, show list
+  if(!showDetail&&posts.length>1){
+    return (
+      <div className="modal-overlay" onClick={onClose}><div className="modal" onClick={function(e){e.stopPropagation();}}>
+        <div className="modal-header">
+          <div className="flex items-center gap-8">
+            <span className={'day-tag f-label '+(theme?theme.cls:'')} style={{fontSize:12}}>{theme?theme.label:''}</span>
+            <span className="f-body" style={{fontSize:13,color:'var(--tl)'}}>{data.date}</span>
+            <span className="f-label" style={{fontSize:11,color:'var(--cherry)'}}>{posts.length} posts</span>
+          </div>
+          <button className="modal-close" onClick={onClose}>&#10005;</button>
+        </div>
+        {posts.map(function(post,pi){return(
+          <div key={pi} className="post-list-item" onClick={function(){setViewIdx(pi);}}>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="f-label" style={{fontSize:14}}>{post.title||'Untitled'}</div>
+                <div className="flex gap-4 mt-6 flex-wrap">
+                  {post.platforms?.map(function(p){return <span key={p} className={'plat-badge plat-'+p.toLowerCase()}>{p}</span>;})}
+                  {post.status&&<span className={'status-pill '+SC[post.status]}>{post.status}</span>}
+                </div>
+              </div>
+              {post.image&&<img src={post.image} alt="" style={{width:50,height:50,borderRadius:6,objectFit:'cover',marginLeft:8}}/>}
+            </div>
+          </div>
+        );})}
+        <div style={{textAlign:'right',marginTop:16}}><button className="btn btn-ghost f-label" onClick={onClose}>Close</button></div>
+      </div></div>
+    );
+  }
+
+  // Single post detail view
+  if(!entry)entry=posts[0];
+  var actualIdx=viewIdx!==null?viewIdx:0;
+  return (
+    <div className="modal-overlay" onClick={onClose}><div className="modal" onClick={function(e){e.stopPropagation();}}>
+      <div className="modal-header">
+        <div className="flex items-center gap-8">
+          <span className={'day-tag f-label '+(theme?theme.cls:'')} style={{fontSize:12}}>{theme?theme.label:''}</span>
+          <span className="f-body" style={{fontSize:13,color:'var(--tl)'}}>{data.date}</span>
+          {posts.length>1&&<span className="f-label" style={{fontSize:11,color:'var(--cherry)'}}>Post {actualIdx+1} of {posts.length}</span>}
+          {entry.status&&<span className={'status-pill '+SC[entry.status]}>{entry.status}</span>}
+        </div>
+        <button className="modal-close" onClick={onClose}>&#10005;</button>
+      </div>
+      {entry.image&&<div style={{marginBottom:16,borderRadius:10,overflow:'hidden'}}><img src={entry.image} alt="" style={{width:'100%',maxHeight:280,objectFit:'cover'}}/></div>}
+      {entry.title&&<div className="view-field"><div className="view-label f-label">Title</div><div className="view-value f-body" style={{fontWeight:600}}>{entry.title}</div></div>}
+      <div className="view-field"><div className="view-label f-label">Caption</div><div className="f-body" style={{fontSize:14,lineHeight:1.6}} dangerouslySetInnerHTML={{__html:entry.caption||'\u2014'}}/></div>
+      {entry.hashtags&&<div className="view-field"><div className="view-label f-label">Hashtags</div><div className="view-value f-body" style={{color:'var(--cherry)'}}>{entry.hashtags}</div></div>}
+      <div className="view-field"><div className="view-label f-label">Platforms</div><div className="flex gap-4 flex-wrap">{entry.platforms?.map(function(p){return <span key={p} className={'plat-badge plat-'+p.toLowerCase()}>{p}</span>;})}</div></div>
+      {entry.postLink&&<div className="view-field"><div className="view-label f-label">Post link</div><a href={entry.postLink} target="_blank" rel="noopener" style={{fontSize:13,color:'var(--cherry)'}}>{entry.postLink}</a></div>}
+      {entry.mediaFiles?.length>0&&<div className="view-field"><div className="view-label f-label">Media files</div><div className="flex gap-4 flex-wrap">{entry.mediaFiles.map(function(m,i){return <div key={i} className="bd-media-thumb">{m.type==='video'?<video src={m.data} muted controls/>:<img src={m.data} alt=""/>}</div>;})}</div></div>}
+      {entry.comments?.some(function(c){return c;})&&<div className="view-field"><div className="view-label f-label">Follow-up comments</div>{entry.comments.map(function(c,i){return c?<div key={i} className="comment-row mb-4"><span className="comment-num">{i+1}</span><div className="f-body" style={{fontSize:13,padding:'4px 0',lineHeight:1.5}}>{c}</div></div>:null;})}</div>}
+      {entry.remarks&&<div className="view-field"><div className="view-label f-label">Remarks</div><div className="view-value f-body" style={{fontSize:13,color:'var(--tm)'}}>{entry.remarks}</div></div>}
+      <div className="flex justify-between mt-12">
+        <div className="flex gap-8">
+          {posts.length>1&&<button className="btn btn-ghost f-label" onClick={function(){setViewIdx(null);}}>&#8592; All posts</button>}
+        </div>
+        <div className="flex gap-8">
+          <button className="btn btn-secondary f-label" onClick={function(){onClose();setEditM({date:data.date,dayName:data.dayName,postIndex:actualIdx});}}>Edit</button>
+          <button className="btn btn-ghost f-label" onClick={onClose}>Close</button>
+        </div>
+      </div>
+    </div></div>
+  );
+}
+
+// ═══ CALENDAR (with multi-post + notes on calendar) ═══
+function CalendarTab({yr,mo,content,notes,setViewM}){
+  var dim=new Date(yr,mo+1,0).getDate(),fdow=new Date(yr,mo,1).getDay(),offset=fdow===0?6:fdow-1;
+  var today=dk(new Date()),cells=[];
+  for(var i=0;i<offset;i++)cells.push(null);for(var d=1;d<=dim;d++)cells.push(d);while(cells.length%7)cells.push(null);
+
+  // Index notes by date for quick lookup
+  var notesByDate={};
+  (notes||[]).forEach(function(n){if(n.date){if(!notesByDate[n.date])notesByDate[n.date]=[];notesByDate[n.date].push(n);}});
+
+  return (
+    <div><div className="cal-grid">
+      {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(function(d){return <div key={d} className="cal-hdr f-label">{d}</div>;})}
+      {cells.map(function(day,i){
+        if(!day)return <div key={i} className="cal-cell empty"/>;
+        var d=yr+'-'+String(mo+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
+        var posts=getPosts(content,d);
+        var isT=d===today;
+        var dow=new Date(yr,mo,day).getDay(),dayName=DAYS[dow===0?6:dow-1];
+        var allPosted=posts.length>0&&posts.every(function(p){return p.status==='Posted';});
+        var firstPost=posts[0]||null;
+        var dateNotes=notesByDate[d]||[];
+
+        return (
+          <div key={i} className={'cal-cell'+(isT?' today':'')+(allPosted?' posted':'')}
+            onClick={function(){if(posts.length>0)setViewM({date:d,dayName:posts[0].dayName||dayName});}}>
+            <div className="cal-date f-label">{day}</div>
+            {firstPost?.image&&<img src={firstPost.image} alt="" className="cal-thumb"/>}
+            {posts.length>0&&<div>
+              {posts.map(function(post,pi){return(
+                <div key={pi} className="cal-title f-body">{(post.title||'').substring(0,30)}{posts.length>1&&pi<posts.length-1?',':''}</div>
+              );})}
+              <div className="cal-platforms">
+                {(function(){
+                  var allPlats={};
+                  posts.forEach(function(p){(p.platforms||[]).forEach(function(pl){allPlats[pl]=true;});});
+                  return Object.keys(allPlats).map(function(p){return <div key={p} className="cal-dot" style={{background:platColor(p)}} title={p}/>;});
+                })()}
+                {firstPost.status&&<span className={'status-pill '+SC[firstPost.status]} style={{fontSize:7,marginLeft:'auto'}}>{firstPost.status}</span>}
+              </div>
+            </div>}
+            {dateNotes.length>0&&dateNotes.map(function(n,ni){return(
+              <div key={ni} className="cal-note">
+                <div className="cal-note-dot"/>
+                <div className="cal-note-text">{n.text}</div>
+              </div>
+            );})}
+          </div>
+        );
+      })}
+    </div>
+    <div style={{marginTop:10,display:'flex',gap:14,fontSize:11,color:'var(--tl)',flexWrap:'wrap'}} className="f-label">
+      {[['LinkedIn','var(--li)'],['Instagram','var(--ig)'],['Threads','var(--th)'],['Youtube','var(--yt)']].map(function(pair){return(
+        <span key={pair[0]}><span style={{background:pair[1],display:'inline-block',width:8,height:8,borderRadius:'50%',marginRight:3}}/>{pair[0]}</span>
+      );})}
+      <span style={{display:'inline-flex',alignItems:'center',gap:3}}><span className="cal-note-dot" style={{width:8,height:8,borderRadius:'50%',background:'var(--pink)',display:'inline-block'}}/> Note</span>
+      <span className="f-body" style={{marginLeft:'auto',fontWeight:400}}>Click any day with content to view details</span>
+    </div></div>
+  );
+}
+
+// ═══ ENGAGEMENT ═══
+function EngagementTab({eng,setEng,engD,setEngD}){
+  var dd=eng[engD]||{linkedin:[],instagram:[],threads:[],youtube:[]};
+  var[exp,setExp]=useState({});
+  var toggle=function(p,i){setExp(function(x){var k=p+'-'+i;return{...x,[k]:!x[k]};});};
+  var add=function(p){var u={...dd};if(!u[p])u[p]=[];u[p]=[...u[p],{name:'',comment:'',link:''}];setEng(function(x){return{...x,[engD]:u};});};
+  var upd=function(p,i,f,v){var u={...dd};u[p]=[...u[p]];u[p][i]={...u[p][i],[f]:v};setEng(function(x){return{...x,[engD]:u};});};
+  var rm=function(p,i){var u={...dd};u[p]=u[p].filter(function(_,idx){return idx!==i;});setEng(function(x){return{...x,[engD]:u};});};
+  var total=(dd.linkedin?.length||0)+(dd.instagram?.length||0)+(dd.threads?.length||0)+(dd.youtube?.length||0);
+  var pcs=[{k:'linkedin',l:'LinkedIn',c:'var(--li)'},{k:'instagram',l:'Instagram',c:'var(--ig)'},{k:'threads',l:'Threads',c:'var(--th)'},{k:'youtube',l:'Youtube',c:'var(--yt)'}];
+  return (
+    <div>
+      <div style={{background:'var(--white)',border:'1px solid var(--bdr)',borderRadius:10,padding:14,marginBottom:14,display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:10}}>
+        <div className="flex items-center gap-8"><label className="form-label f-label" style={{margin:0}}>Date:</label><input type="date" className="form-input f-body" value={engD} onChange={function(e){setEngD(e.target.value);}} style={{width:180}}/></div>
+        <div className="stat" style={{padding:'6px 14px',minWidth:'auto'}}><span className="stat-val" style={{fontSize:18}}>{total}</span><span className="stat-lbl f-label">Today's entries</span></div>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(250px, 1fr))',gap:14}}>
+        {pcs.map(function(pc){return(
+          <div key={pc.k} className="eng-col">
+            <div className="eng-col-hdr"><div className="eng-dot" style={{background:pc.c}}/><span className="eng-col-title f-label">{pc.l}</span><span className="eng-col-count f-label">{dd[pc.k]?.length||0} entries</span></div>
+            {dd[pc.k]?.map(function(entry,i){
+              var isO=exp[pc.k+'-'+i];
+              return <div key={i} className="eng-entry">
+                <div className="eng-entry-header f-body" onClick={function(){toggle(pc.k,i);}}><span style={{fontWeight:600}}>{entry.name||<span style={{color:'var(--tl)',fontWeight:400}}>No name</span>}</span><span className={'eng-entry-arrow'+(isO?' open':'')}>&#9654;</span></div>
+                {isO&&<div className="eng-entry-body">
+                  <input className="form-input f-body" placeholder="Name" value={entry.name} onChange={function(e){upd(pc.k,i,'name',e.target.value);}} style={{marginBottom:6}}/>
+                  <textarea className="form-input f-body" placeholder="Their comment or yours" value={entry.comment} onChange={function(e){upd(pc.k,i,'comment',e.target.value);}} rows={2} style={{marginBottom:6}}/>
+                  <input className="form-input f-body" placeholder="Link to their post" value={entry.link} onChange={function(e){upd(pc.k,i,'link',e.target.value);}} style={{marginBottom:6}}/>
+                  <button className="btn btn-danger btn-sm f-label" onClick={function(){rm(pc.k,i);}}>Remove</button>
+                </div>}
+              </div>;
+            })}
+            <button className="btn btn-secondary btn-sm mt-8 f-label" style={{width:'100%'}} onClick={function(){add(pc.k);}}>+ Add {pc.l} entry</button>
+          </div>
+        );})}
+      </div>
+    </div>
+  );
+}
+
+// ═══ BRAIN DUMP ═══
+function BrainDumpTab({dumps,setDumps}){
+  var[title,setTitle]=useState('');
+  var[body,setBody]=useState('');
+  var[tags,setTags]=useState('');
+  var[media,setMedia]=useState([]);
+  var[layout,setLayout]=useState('list');
+  var[expanded,setExpanded]=useState({});
+  var[editId,setEditId]=useState(null);
+  var fileRef=useRef();
+
+  var addFiles=async function(e){
+    var files=Array.from(e.target.files);
+    for(var f of files){
+      var b64=await f2b(f);
+      setMedia(function(p){return[...p,{data:b64,type:f.type.startsWith('video')?'video':f.type.startsWith('image')?'image':'file',name:f.name}];});
+    }
+  };
+
+  var saveDump=function(){
+    if(!title.trim()&&!body.trim())return;
+    if(editId){
+      setDumps(function(p){return p.map(function(d){return d.id===editId?{...d,title:title.trim(),body:body,tags:tags.split(',').map(function(t){return t.trim();}).filter(Boolean),media:media}:d;});});
+      setEditId(null);
+    }else{
+      setDumps(function(p){return[{id:Date.now(),title:title.trim(),body:body,tags:tags.split(',').map(function(t){return t.trim();}).filter(Boolean),media:media,date:new Date().toISOString().split('T')[0]},...p];});
+    }
+    setTitle('');setBody('');setTags('');setMedia([]);
+  };
+
+  var startEdit=function(d){
+    setEditId(d.id);setTitle(d.title);setBody(d.body);setTags(d.tags?.join(', ')||'');setMedia(d.media||[]);
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  var cancelEdit=function(){setEditId(null);setTitle('');setBody('');setTags('');setMedia([]);};
+  var delDump=function(id){setDumps(function(p){return p.filter(function(d){return d.id!==id;});});};
+  var toggleExp=function(id){setExpanded(function(p){return{...p,[id]:!p[id]};});};
+
+  var downloadDump=function(d,format){
+    var text=d.title+'\n\n'+d.body.replace(/<[^>]*>/g,'')+'\n\nTags: '+(d.tags?.join(', ')||'none')+'\nDate: '+d.date;
+    if(format==='txt'){
+      var blob=new Blob([text],{type:'text/plain'});
+      var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download=(d.title||'braindump')+'.txt';a.click();URL.revokeObjectURL(url);
+    }else{
+      var html='<html><head><meta charset="utf-8"><style>body{font-family:Arial,sans-serif;padding:40px;}</style></head><body><h1>'+d.title+'</h1>'+d.body+'<br><br><p><strong>Tags:</strong> '+(d.tags?.join(', ')||'none')+'</p><p><strong>Date:</strong> '+d.date+'</p></body></html>';
+      var blob=new Blob([html],{type:'application/msword'});
+      var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download=(d.title||'braindump')+'.doc';a.click();URL.revokeObjectURL(url);
+    }
+  };
+
+  return (
+    <div>
+      <div className="bd-card" style={{borderColor:'var(--cherry)',marginBottom:20}}>
+        <div style={{padding:14}}>
+          <h3 className="f-label" style={{marginBottom:12,color:'var(--cherry)',fontSize:15}}>{editId?'Edit brain dump':'New brain dump'}</h3>
+          <div className="form-group"><input className="form-input f-body" placeholder="Title or inspo headline..." value={title} onChange={function(e){setTitle(e.target.value);}}/></div>
+          <div className="form-group">
+            <RichTextEditor value={body} onChange={setBody} placeholder="Dump your thoughts, ideas, inspo here..." minHeight={120} key={editId||'new'}/>
+          </div>
+          <div className="form-group"><input className="form-input f-body" placeholder="Tags (comma separated): inspo, content idea, hook..." value={tags} onChange={function(e){setTags(e.target.value);}}/></div>
+          {media.length>0&&<div className="flex gap-4 flex-wrap mb-8">
+            {media.map(function(m,i){return(
+              <div key={i} className="bd-media-thumb" style={{position:'relative'}}>
+                {m.type==='image'?<img src={m.data} alt=""/>:m.type==='video'?<video src={m.data} muted/>:<div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100%',fontSize:9,padding:4,textAlign:'center',background:'var(--ivory-dk)'}}>{m.name}</div>}
+                <button style={{position:'absolute',top:2,right:2,background:'rgba(0,0,0,.6)',color:'#fff',border:'none',borderRadius:'50%',width:16,height:16,fontSize:9,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}} onClick={function(){setMedia(function(p){return p.filter(function(_,idx){return idx!==i;});});}}>&#10005;</button>
+              </div>
+            );})}
+          </div>}
+          <div className="flex gap-8">
+            <button className="btn btn-secondary f-label" onClick={function(){fileRef.current.click();}}>Upload files</button>
+            <input ref={fileRef} type="file" accept="image/*,video/*,.pdf,.doc,.docx,.txt" multiple style={{display:'none'}} onChange={addFiles}/>
+            <button className="btn btn-primary f-label" onClick={saveDump}>{editId?'Update dump':'Save dump'}</button>
+            {editId&&<button className="btn btn-ghost f-label" onClick={cancelEdit}>Cancel</button>}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-between items-center mb-8">
+        <span className="f-label" style={{fontSize:13,color:'var(--tm)'}}>{dumps.length} brain dump{dumps.length!==1?'s':''}</span>
+        <div className="bd-layout-toggle">
+          <button className={'bd-lt-btn f-label'+(layout==='list'?' active':'')} onClick={function(){setLayout('list');}}>List</button>
+          <button className={'bd-lt-btn f-label'+(layout==='grid'?' active':'')} onClick={function(){setLayout('grid');}}>Grid</button>
+        </div>
+      </div>
+
+      <div className={layout==='grid'?'bd-grid-view':'bd-list'}>
+        {dumps.map(function(d){
+          var isOpen=expanded[d.id];
+          return (
+            <div key={d.id} className="bd-card">
+              <div className="bd-card-header" onClick={function(){toggleExp(d.id);}}>
+                <div className="bd-card-title f-label">{d.title||'Untitled'}</div>
+                <div className="flex items-center gap-8">
+                  <span className="bd-card-date f-body">{d.date}</span>
+                  <span style={{fontSize:10,color:'var(--tl)',transition:'.2s',transform:isOpen?'rotate(90deg)':'rotate(0)'}}>&#9654;</span>
+                </div>
+              </div>
+              {isOpen&&<div className="bd-card-body">
+                <div className="bd-card-text f-body" dangerouslySetInnerHTML={{__html:d.body}}/>
+                {d.media?.length>0&&<div className="bd-media-grid">
+                  {d.media.map(function(m,i){return(
+                    <div key={i} className="bd-media-thumb">
+                      {m.type==='image'?<img src={m.data} alt=""/>:m.type==='video'?<video src={m.data} muted controls style={{width:'100%',height:'100%',objectFit:'cover'}}/>:<div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100%',fontSize:9,padding:4,background:'var(--ivory-dk)'}}>{m.name}</div>}
+                    </div>
+                  );})}
+                </div>}
+                {d.tags?.length>0&&<div className="bd-tags">{d.tags.map(function(t,i){return <span key={i} className="bd-tag f-label">{t}</span>;})}</div>}
+              </div>}
+              {isOpen&&<div className="bd-actions">
+                <button className="btn btn-ghost btn-sm f-label" onClick={function(){startEdit(d);}}>Edit</button>
+                <button className="btn btn-danger btn-sm f-label" onClick={function(){delDump(d.id);}}>Remove</button>
+                <button className="btn btn-ghost btn-sm f-label" onClick={function(){downloadDump(d,'doc');}}>Download Word</button>
+                <button className="btn btn-ghost btn-sm f-label" onClick={function(){downloadDump(d,'txt');}}>Download TXT</button>
+              </div>}
+            </div>
+          );
+        })}
+        {dumps.length===0&&<div style={{textAlign:'center',padding:40,color:'var(--tl)'}} className="f-body">No brain dumps yet. Start dumping ideas above.</div>}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
